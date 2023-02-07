@@ -4,16 +4,16 @@ idéia do projeto é ser uma central de controle e organização para um pequeno
 
 ## Funcionalidades
 
-- cadastro e login de usuários
-- crud de clientes
-- crud de produtos
-- crud de vendas
+- cadastro e login de usuários (2 rotas)
+- crud de clientes (4 rotas)
+- crud de produtos (4 rotas)
+- crud de vendas (4 rotas)
 - relatórios
     - inadimplência
     - lucro por data
 - aviso de notificações de inadimplência
-    - via whatsapp
-    - via e-mail
+    - via whatsapp 
+    - via e-mail 
 
 ## Entidades
 
@@ -47,5 +47,9 @@ venda
 ## Etapas
 
 - sql do banco de dados
-- desenvolver o backend com go
+- backend base login register
+- swagger
+- cruds 
+- relatórios
+- notificações
 - desenvolver o frontend com react
