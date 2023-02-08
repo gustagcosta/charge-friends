@@ -47,9 +47,13 @@ venda
 ## Etapas
 
 - sql do banco de dados
-- backend base login register
-- swagger
-- cruds 
-- relatórios
-- notificações
+    - usar docker-compose e rodar o sql
+- backend 
+    - instalar tools
+        - tasks go
+        - air 
+    - base login register
+    - cruds 
+    - relatórios
+    - notificações
 - desenvolver o frontend com react
