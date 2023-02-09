@@ -1,9 +1,9 @@
 package user
 
 import (
+	"backend/config"
 	"fmt"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -120,8 +120,16 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 		},
 	}
 
+	env, err := config.LoadConfig()
+	if err != nil {
+		fmt.Println("error: ", err)
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "failed at register user",
+		})
+	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_KEY")))
+	tokenString, err := token.SignedString([]byte(env.JWT_KEY))
 	if err != nil {
 		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

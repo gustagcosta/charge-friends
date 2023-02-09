@@ -1,8 +1,8 @@
 package user
 
 import (
+	"backend/config"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,6 +10,14 @@ import (
 )
 
 func Protected(ctx *fiber.Ctx) error {
+	env, err := config.LoadConfig()
+	if err != nil {
+		fmt.Println("error: ", err)
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "failed at register user",
+		})
+	}
+
 	var tokenString string
 	authorization := ctx.Get("Authorization")
 
@@ -26,7 +34,7 @@ func Protected(ctx *fiber.Ctx) error {
 			return nil, fmt.Errorf("unexpected signing method: %s", jwtToken.Header["alg"])
 		}
 
-		return []byte(os.Getenv("JWT_KEY")), nil
+		return []byte(env.JWT_KEY), nil
 	})
 
 	if err != nil {
