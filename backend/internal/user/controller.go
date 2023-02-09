@@ -47,15 +47,15 @@ func (c *UserController) CreateNewUser(ctx *fiber.Ctx) error {
 		})
 	}
 
-	bytes, err := HashPassword(user.Password)
+	bytes, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "failed at register user",
 		})
 	}
 
-	req.Password = bytes
+	encryptedPassword := string(bytes)
+	req.Password = encryptedPassword
 
 	err = c.storage.CreateNewUser(*req, ctx.Context())
 	if err != nil {
@@ -71,7 +71,6 @@ func (c *UserController) CreateNewUser(ctx *fiber.Ctx) error {
 func (c *UserController) Login(ctx *fiber.Ctx) error {
 	req := &UserLoginRequest{}
 	if err := ctx.BodyParser(req); err != nil {
-		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": "error parsing body",
 		})
@@ -98,21 +97,16 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	fmt.Println("hash", user.Password)
-	fmt.Println("password", req.Password)
-
 	passwordMatch := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-
 	if passwordMatch != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "password not match",
 		})
 	}
 
-	return ctx.SendStatus(http.StatusOK)
-}
+	// gerar token jwt
+	// criar middleware para rotas privadas
+	// partir pros cruds
 
-func HashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(bytes), err
+	return ctx.SendStatus(http.StatusOK)
 }

@@ -1,30 +1,19 @@
-version: '3'
- 
+version: '3.5'
+
 services:
-  mysql:
-    image: mysql:8.0.32
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8 --collation-server=utf8_general_ci 
-    container_name: mysql
+  postgres:
+    container_name: postgres_container
+    image: postgres
     environment:
-      MYSQL_ROOT_PASSWORD: 123!@#123abc
-      MYSQL_DATABASE: database
-      MYSQL_USER: docker
-      MYSQL_PASSWORD: docker
-    ports:
-      - "3306:3306"
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: docker
+      PGDATA: /data/postgres
     volumes:
-      - dbdata:/var/lib/mysql
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    links:
-      - mysql
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
-    restart: always
+       - postgres:/data/postgres
     ports:
-      - 8081:80
+      - "5432:5432"
+    restart: unless-stopped
+
 volumes:
-  dbdata:
+    postgres:

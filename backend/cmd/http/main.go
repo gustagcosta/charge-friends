@@ -1,16 +1,16 @@
 package main
 
 import (
+	"backend/config"
+	"backend/internal/storage"
+	"backend/internal/user"
+	"backend/pkg/shutdown"
 	"fmt"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gustagcosta/startup/backend/config"
-	"github.com/gustagcosta/startup/backend/internal/storage"
-	"github.com/gustagcosta/startup/backend/internal/user"
-	"github.com/gustagcosta/startup/backend/pkg/shutdown"
 )
 
 func main() {

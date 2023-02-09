@@ -50,8 +50,8 @@ venda
     - usar docker-compose e rodar o sql
 - backend 
     - instalar tools
-        - tasks go
-        - air 
+        - tasks go `go install github.com/go-task/task/v3/cmd/task@latest`
+        - air `go install github.com/cosmtrek/air@latest`
     - base login register
     - cruds 
     - relatórios
