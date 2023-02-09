@@ -1,6 +1,8 @@
 package user
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/gofiber/fiber/v2"
+)
 
 func AddUserRoutes(app *fiber.App, controller *UserController) {
 	users := app.Group("/users")
@@ -8,5 +10,6 @@ func AddUserRoutes(app *fiber.App, controller *UserController) {
 	// add middlewares here
 
 	// add routes here
-	users.Get("/", controller.getAll)
+	users.Post("/", controller.CreateNewUser)
+	users.Post("/login", controller.Login)
 }

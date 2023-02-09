@@ -4,12 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	_ "github.com/gustagcosta/startup/backend/docs"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/swagger"
 	"github.com/gustagcosta/startup/backend/config"
 	"github.com/gustagcosta/startup/backend/internal/storage"
 	"github.com/gustagcosta/startup/backend/internal/user"
@@ -36,6 +33,7 @@ func main() {
 
 	// run the cleanup after the server is terminated
 	defer cleanup()
+
 	if err != nil {
 		fmt.Printf("error: %v", err)
 		exitCode = 1
@@ -65,9 +63,8 @@ func run(env config.EnvVars) (func(), error) {
 }
 
 func buildServer(env config.EnvVars) (*fiber.App, func(), error) {
-
 	// init the storage
-	db, err := storage.BootstrapMysql(env.MYSQL_URI)
+	db, err := storage.BootstrapPG(env.PG_URI)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -84,19 +81,11 @@ func buildServer(env config.EnvVars) (*fiber.App, func(), error) {
 		return c.SendString("Healthy!")
 	})
 
-	// add docs
-	app.Get("/swagger/*", swagger.HandlerDefault)
-
-	// create the user domain
-	// todoStore := todo.NewTodoStorage(db)
-	// todoController := todo.NewTodoController(todoStore)
-	// todo.AddTodoRoutes(app, todoController)
-
 	userStore := user.NewUserStorage(db)
 	userController := user.NewUserController(userStore)
 	user.AddUserRoutes(app, userController)
 
 	return app, func() {
-		storage.CloseMysql(db)
+		storage.ClosePG(db)
 	}, nil
 }
