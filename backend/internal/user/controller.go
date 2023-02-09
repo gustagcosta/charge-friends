@@ -3,13 +3,21 @@ package user
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserController struct {
 	storage *UserStorage
+}
+
+type Claims struct {
+	ID int64 `json:"id"`
+	jwt.RegisteredClaims
 }
 
 func NewUserController(storage *UserStorage) *UserController {
@@ -104,9 +112,29 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	// gerar token jwt
+	expirationTime := time.Now().Add(24 * time.Hour)
+	claims := &Claims{
+		ID: user.ID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_KEY")))
+	if err != nil {
+		fmt.Println("error: ", err)
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "failed at register user",
+		})
+	}
+
 	// criar middleware para rotas privadas
 	// partir pros cruds
 
-	return ctx.SendStatus(http.StatusOK)
+	return ctx.JSON(fiber.Map{"token": tokenString})
+}
+
+func (c *UserController) Private(ctx *fiber.Ctx) error {
+	return ctx.JSON(fiber.Map{"id": ctx.Locals("userId")})
 }

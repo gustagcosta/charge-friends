@@ -1,7 +1,6 @@
 package main
 
 import (
-	"backend/config"
 	"backend/internal/storage"
 	"backend/internal/user"
 	"fmt"
@@ -12,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 	}()
 
 	// load config
-	env, err := config.LoadConfig()
+	err := godotenv.Load(".env")
 	if err != nil {
 		fmt.Printf("error: %v", err)
 		exitCode = 1
@@ -30,7 +30,7 @@ func main() {
 	}
 
 	// run the server
-	cleanup, err := run(env)
+	cleanup, err := run()
 
 	// run the cleanup after the server is terminated
 	defer cleanup()
@@ -45,15 +45,15 @@ func main() {
 	Gracefully()
 }
 
-func run(env config.EnvVars) (func(), error) {
-	app, cleanup, err := buildServer(env)
+func run() (func(), error) {
+	app, cleanup, err := buildServer()
 	if err != nil {
 		return nil, err
 	}
 
 	// start the server
 	go func() {
-		app.Listen("0.0.0.0:" + env.PORT)
+		app.Listen("0.0.0.0:" + os.Getenv("PORT"))
 	}()
 
 	// return a function to close the server and database
@@ -63,9 +63,9 @@ func run(env config.EnvVars) (func(), error) {
 	}, nil
 }
 
-func buildServer(env config.EnvVars) (*fiber.App, func(), error) {
+func buildServer() (*fiber.App, func(), error) {
 	// init the storage
-	db, err := storage.BootstrapPG(env.PG_URI)
+	db, err := storage.BootstrapPG(os.Getenv("PG_URI"))
 	if err != nil {
 		return nil, nil, err
 	}

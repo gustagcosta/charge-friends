@@ -12,4 +12,5 @@ func AddUserRoutes(app *fiber.App, controller *UserController) {
 	// add routes here
 	users.Post("/", controller.CreateNewUser)
 	users.Post("/login", controller.Login)
+	users.Get("/private", Protected, controller.Private)
 }
