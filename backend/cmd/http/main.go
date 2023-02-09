@@ -4,9 +4,10 @@ import (
 	"backend/config"
 	"backend/internal/storage"
 	"backend/internal/user"
-	"backend/pkg/shutdown"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -41,7 +42,7 @@ func main() {
 	}
 
 	// ensure the server is shutdown gracefully & app runs
-	shutdown.Gracefully()
+	Gracefully()
 }
 
 func run(env config.EnvVars) (func(), error) {
@@ -88,4 +89,12 @@ func buildServer(env config.EnvVars) (*fiber.App, func(), error) {
 	return app, func() {
 		storage.ClosePG(db)
 	}, nil
+}
+
+func Gracefully() {
+	quit := make(chan os.Signal, 1)
+	defer close(quit)
+
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
 }
