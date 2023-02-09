@@ -43,7 +43,7 @@ func (c *UserController) CreateNewUser(ctx *fiber.Ctx) error {
 
 	user, err := c.storage.FindUserByEmail(req.Email)
 	if err != nil {
-		fmt.Println("error: ", err)
+		fmt.Println("error: ", err) // improve this
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "failed at register user",
 		})
@@ -128,9 +128,6 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 			"message": "failed at register user",
 		})
 	}
-
-	// criar middleware para rotas privadas
-	// partir pros cruds
 
 	return ctx.JSON(fiber.Map{"token": tokenString})
 }

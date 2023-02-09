@@ -9,11 +9,6 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-type Header struct {
-	Authorization string
-}
-
-// Protected protect routes
 func Protected(ctx *fiber.Ctx) error {
 	var tokenString string
 	authorization := ctx.Get("Authorization")
