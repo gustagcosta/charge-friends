@@ -1,6 +1,19 @@
 version: '3.5'
 
 services:
+  # backend:
+  #   container_name: backend_container
+  #   image: backend
+  #   environment:
+  #     PORT: '8080'
+  #     PG_URI: 'user=docker password=docker host=postgres port=5432 dbname=docker sslmode=disable'
+  #     JWT_KEY: '123'
+  #   ports:
+  #     - '8080:8080'
+  #   networks:
+  #     - startup
+  #   restart: unless-stopped
+
   postgres:
     container_name: postgres_container
     image: postgres
@@ -9,11 +22,18 @@ services:
       POSTGRES_PASSWORD: docker
       POSTGRES_DB: docker
       PGDATA: /data/postgres
+    networks:
+      - startup
     volumes:
-       - postgres:/data/postgres
+      - postgres:/data/postgres
+      - ./setup-database.sql:/docker-entrypoint-initdb.d/0_init.sql
     ports:
-      - "5432:5432"
+      - '5432:5432'
     restart: unless-stopped
 
+networks:
+  startup:
+    driver: bridge
+
 volumes:
-    postgres:
+  postgres:

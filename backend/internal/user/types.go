@@ -6,20 +6,20 @@ import (
 )
 
 type User struct {
-	ID            int64     `json:"id"`
-	Name          string    `json:"name"`
-	CorporateName string    `json:"corporate_name"`
-	Email         string    `json:"email"`
-	Password      string    `json:"password"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	PixKey    string    `json:"pix_key"`
+	Email     string    `json:"email"`
+	Password  string    `json:"password"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type UserCreateRequest struct {
-	Name          string `json:"name"`
-	CorporateName string `json:"corporate_name"`
-	Email         string `json:"email"`
-	Password      string `json:"password"`
+	Name     string `json:"name"`
+	PixKey   string `json:"pix_key"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 func (u *UserCreateRequest) Validate() error {
@@ -27,8 +27,8 @@ func (u *UserCreateRequest) Validate() error {
 		return errors.New("a user must have a name")
 	}
 
-	if u.CorporateName == "" {
-		return errors.New("a user must have a corporate name")
+	if u.PixKey == "" {
+		return errors.New("a user must have a pix key")
 	}
 
 	if u.Email == "" {

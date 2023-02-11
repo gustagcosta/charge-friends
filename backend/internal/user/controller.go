@@ -3,7 +3,6 @@ package user
 import (
 	"backend/config"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,7 +15,7 @@ type UserController struct {
 }
 
 type Claims struct {
-	ID int64 `json:"id"`
+	ID int `json:"id"`
 	jwt.RegisteredClaims
 }
 
@@ -65,7 +64,7 @@ func (c *UserController) CreateNewUser(ctx *fiber.Ctx) error {
 	encryptedPassword := string(bytes)
 	req.Password = encryptedPassword
 
-	err = c.storage.CreateNewUser(*req, ctx.Context())
+	err = c.storage.CreateNewUser(*req)
 	if err != nil {
 		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -73,7 +72,7 @@ func (c *UserController) CreateNewUser(ctx *fiber.Ctx) error {
 		})
 	}
 
-	return ctx.SendStatus(http.StatusCreated)
+	return ctx.SendStatus(fiber.StatusCreated)
 }
 
 func (c *UserController) Login(ctx *fiber.Ctx) error {

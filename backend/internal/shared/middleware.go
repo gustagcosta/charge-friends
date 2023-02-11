@@ -1,4 +1,4 @@
-package user
+package shared
 
 import (
 	"backend/config"
@@ -44,9 +44,8 @@ func Protected(ctx *fiber.Ctx) error {
 	claims, ok := tokenByte.Claims.(jwt.MapClaims)
 	if !ok || !tokenByte.Valid {
 		return ctx.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "invalid token claim"})
-
 	}
 
-	ctx.Locals("userId", claims["id"])
+	ctx.Locals("userId", claims["id"].(float64))
 	return ctx.Next()
 }

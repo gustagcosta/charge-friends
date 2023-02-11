@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/config"
+	"backend/internal/client"
 	"backend/internal/storage"
 	"backend/internal/user"
 	"fmt"
@@ -40,6 +41,8 @@ func main() {
 		exitCode = 1
 		return
 	}
+
+	fmt.Println("u la la")
 
 	// ensure the server is shutdown gracefully & app runs
 	Gracefully()
@@ -82,9 +85,13 @@ func buildServer(env config.EnvVars) (*fiber.App, func(), error) {
 		return c.SendString("Healthy!")
 	})
 
-	userStore := user.NewUserStorage(db)
-	userController := user.NewUserController(userStore)
+	userStorage := user.NewUserStorage(db)
+	userController := user.NewUserController(userStorage)
 	user.AddUserRoutes(app, userController)
+
+	clientStorage := client.NewClientStorage(db)
+	clientController := client.NewClientController(clientStorage)
+	client.AddClientRoutes(app, clientController)
 
 	return app, func() {
 		storage.ClosePG(db)
