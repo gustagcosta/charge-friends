@@ -18,7 +18,6 @@ type ClientCreateRequest struct {
 	Name     string `json:"name"`
 	Whatsapp string `json:"whatsapp"`
 	Email    string `json:"email"`
-	UserId   int    `json:"user_id"`
 }
 
 func (c *ClientCreateRequest) Validate() error {

@@ -4,8 +4,8 @@ CREATE TABLE users (
   pix_key text NOT NULL,
   email text NOT NULL,
   password text NOT NULL,
-  created_at timestamptz NOT NULL DEFAULT NOW(),
-  updated_at timestamptz NOT NULL DEFAULT NOW()
+  created_at timestamp NOT NULL DEFAULT NOW(),
+  updated_at timestamp NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE clients (
@@ -14,20 +14,43 @@ CREATE TABLE clients (
   whatsapp text NOT NULL,
   email text NOT NULL,
   user_id integer NOT NULL,
-  created_at timestamptz NOT NULL DEFAULT NOW(),
-  updated_at timestamptz NOT NULL DEFAULT NOW()
+  created_at timestamp NOT NULL DEFAULT NOW(),
+  updated_at timestamp NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE charges (
   id serial PRIMARY KEY,
   description text NOT NULL,
-  paid_at timestamptz DEFAULT NULL,
+  paid_at timestamp DEFAULT NULL,
   client_id integer NOT NULL,
   user_id integer NOT NULL,
-  created_at timestamptz NOT NULL DEFAULT NOW(),
-  updated_at timestamptz NOT NULL DEFAULT NOW()
+  created_at timestamp NOT NULL DEFAULT NOW(),
+  updated_at timestamp NOT NULL DEFAULT NOW()
 );
 
 ALTER TABLE clients ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 ALTER TABLE charges ADD FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE;
 ALTER TABLE charges ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+CREATE OR REPLACE FUNCTION update_edit_date()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_edit_date_trigger
+BEFORE UPDATE ON clients
+FOR EACH ROW
+EXECUTE FUNCTION update_edit_date();
+
+CREATE TRIGGER update_edit_date_trigger
+BEFORE UPDATE ON charges
+FOR EACH ROW
+EXECUTE FUNCTION update_edit_date();
+
+CREATE TRIGGER update_edit_date_trigger
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION update_edit_date();

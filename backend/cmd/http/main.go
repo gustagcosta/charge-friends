@@ -42,8 +42,6 @@ func main() {
 		return
 	}
 
-	fmt.Println("u la la")
-
 	// ensure the server is shutdown gracefully & app runs
 	Gracefully()
 }

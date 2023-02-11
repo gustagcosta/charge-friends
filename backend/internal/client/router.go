@@ -7,8 +7,10 @@ import (
 )
 
 func AddClientRoutes(app *fiber.App, controller *ClientController) {
-	clients := app.Group("/clients")
+	clients := app.Group("/clients", shared.Protected)
 
-	clients.Get("/", shared.Protected, controller.GetAllClients)
-	clients.Post("/", shared.Protected, controller.CreateNewClient)
+	clients.Get("/", controller.GetAllClients)
+	clients.Post("/", controller.CreateNewClient)
+	clients.Delete("/:id", controller.DeleteClient)
+	clients.Put("/:id", controller.UpdateClient)
 }

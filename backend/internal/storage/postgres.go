@@ -13,8 +13,6 @@ func BootstrapPG(dsn string) (*sql.DB, error) {
 		return nil, err
 	}
 
-	fmt.Printf("pg database connected")
-
 	return db, nil
 }
 
