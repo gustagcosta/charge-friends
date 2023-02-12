@@ -2,10 +2,15 @@
 
 projetinho dos cria pra registrar quem ta te devendo e mandar email e whatsapp pra pessoa lembrar de te pagar de forma automatizada
 
+## Requisitos
+- golang 1.19 
+- docker + docker compose
+
 ## Funcionalidades
 
-- cadastro e login de usuários (2 rotas)
-- crud de cobranças (4 rotas)
+- cadastro e login de usuários
+- crud de cobranças 
+- crud de clientes
 - notificações, será disparada manualmente via rota ou em um serviço em background
     - via whatsapp 
     - via e-mail 
@@ -29,7 +34,7 @@ cobrança
 - id devedor
 - id usuario
 
-devedor
+clientes
 - id
 - nome
 - email
