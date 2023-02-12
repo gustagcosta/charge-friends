@@ -1,13 +1,12 @@
 package client
 
 import (
-	"backend/internal/shared"
-
 	"github.com/gofiber/fiber/v2"
+	"github.com/gustagcosta/charge-friends/server/middleware"
 )
 
 func AddClientRoutes(app *fiber.App, controller *ClientController) {
-	clients := app.Group("/clients", shared.Protected)
+	clients := app.Group("/clients", middleware.Protected)
 
 	clients.Get("/", controller.GetAllClients)
 	clients.Post("/", controller.CreateNewClient)

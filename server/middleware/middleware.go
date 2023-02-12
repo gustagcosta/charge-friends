@@ -1,12 +1,12 @@
-package shared
+package middleware
 
 import (
-	"backend/config"
 	"fmt"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/gustagcosta/charge-friends/server/config"
 )
 
 func Protected(ctx *fiber.Ctx) error {

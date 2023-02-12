@@ -1,10 +1,6 @@
 package main
 
 import (
-	"backend/config"
-	"backend/internal/client"
-	"backend/internal/storage"
-	"backend/internal/user"
 	"fmt"
 	"os"
 	"os/signal"
@@ -13,6 +9,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gustagcosta/charge-friends/internal/client"
+	"github.com/gustagcosta/charge-friends/internal/user"
+	"github.com/gustagcosta/charge-friends/server/config"
+	"github.com/gustagcosta/charge-friends/server/storage"
 )
 
 func main() {

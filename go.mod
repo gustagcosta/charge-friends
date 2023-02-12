@@ -1,4 +1,4 @@
-module backend
+module github.com/gustagcosta/charge-friends
 
 go 1.19
 
@@ -6,8 +6,8 @@ require (
 	github.com/gofiber/fiber/v2 v2.42.0
 	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/lib/pq v1.10.7
-	golang.org/x/crypto v0.5.0
 	github.com/spf13/viper v1.15.0
+	golang.org/x/crypto v0.5.0
 )
 
 require (

@@ -3,7 +3,7 @@ version: '3.5'
 services:
   # backend:
   #   container_name: backend_container
-  #   image: backend
+  #   image: . 
   #   environment:
   #     PORT: '8080'
   #     PG_URI: 'user=docker password=docker host=postgres port=5432 dbname=docker sslmode=disable'

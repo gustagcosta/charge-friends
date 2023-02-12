@@ -1,12 +1,12 @@
 package user
 
 import (
-	"backend/config"
 	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/gustagcosta/charge-friends/server/config"
 	"golang.org/x/crypto/bcrypt"
 )
 
