@@ -1,4 +1,4 @@
-# startup
+# charge-friends
 
 projetinho dos cria pra registrar quem ta te devendo e mandar email e whatsapp pra pessoa lembrar de te pagar de forma automatizada
 
