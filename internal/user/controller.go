@@ -11,18 +11,18 @@ import (
 )
 
 type UserController struct {
-	storage *UserStorage
+	storage UserStorage
+}
+
+func NewUserController(storage UserStorage) *UserController {
+	return &UserController{
+		storage: storage,
+	}
 }
 
 type Claims struct {
 	ID int `json:"id"`
 	jwt.RegisteredClaims
-}
-
-func NewUserController(storage *UserStorage) *UserController {
-	return &UserController{
-		storage: storage,
-	}
 }
 
 func (c *UserController) CreateNewUser(ctx *fiber.Ctx) error {
@@ -40,7 +40,7 @@ func (c *UserController) CreateNewUser(ctx *fiber.Ctx) error {
 		})
 	}
 
-	user, err := c.storage.FindUserByEmail(req.Email)
+	user, err := c.storage.FindByEmail(req.Email)
 	if err != nil {
 		fmt.Println("error: ", err) // improve this
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -64,7 +64,7 @@ func (c *UserController) CreateNewUser(ctx *fiber.Ctx) error {
 	encryptedPassword := string(bytes)
 	req.Password = encryptedPassword
 
-	err = c.storage.CreateNewUser(*req)
+	err = c.storage.Create(req)
 	if err != nil {
 		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -90,7 +90,7 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	user, err := c.storage.FindUserByEmail(req.Email)
+	user, err := c.storage.FindByEmail(req.Email)
 	if err != nil {
 		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

@@ -8,17 +8,17 @@ import (
 )
 
 type ClientController struct {
-	storage *ClientStorage
+	storage ClientStorage
 }
 
-func NewClientController(storage *ClientStorage) *ClientController {
+func NewClientController(storage ClientStorage) *ClientController {
 	return &ClientController{
 		storage: storage,
 	}
 }
 
 func (c *ClientController) GetAllClients(ctx *fiber.Ctx) error {
-	clients, err := c.storage.FindClients(int(ctx.Locals("userId").(float64)))
+	clients, err := c.storage.FindByUserID(int(ctx.Locals("userId").(float64)))
 	if err != nil {
 		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -30,7 +30,7 @@ func (c *ClientController) GetAllClients(ctx *fiber.Ctx) error {
 }
 
 func (c *ClientController) CreateNewClient(ctx *fiber.Ctx) error {
-	req := new(ClientCreateRequest)
+	req := new(CreateClientRequest)
 	if err := ctx.BodyParser(req); err != nil {
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": "error parsing body",
@@ -44,7 +44,7 @@ func (c *ClientController) CreateNewClient(ctx *fiber.Ctx) error {
 		})
 	}
 
-	clientId, err := c.storage.CreateNewClient(req, int(ctx.Locals("userId").(float64)))
+	clientId, err := c.storage.Create(req, int(ctx.Locals("userId").(float64)))
 	if err != nil {
 		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -63,7 +63,7 @@ func (c *ClientController) DeleteClient(ctx *fiber.Ctx) error {
 		})
 	}
 
-	err = c.storage.DeleteClientByID(id)
+	err = c.storage.Delete(id)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"message": "failed to delete client",
@@ -81,14 +81,14 @@ func (c *ClientController) UpdateClient(ctx *fiber.Ctx) error {
 		})
 	}
 
-	req := new(ClientCreateRequest)
+	req := new(CreateClientRequest)
 	if err := ctx.BodyParser(req); err != nil {
 		return ctx.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 			"message": "error parsing body",
 		})
 	}
 
-	client, err := c.storage.FindClientByID(id)
+	client, err := c.storage.FindByID(id)
 	if err != nil {
 		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -115,7 +115,7 @@ func (c *ClientController) UpdateClient(ctx *fiber.Ctx) error {
 		})
 	}
 
-	err = c.storage.UpdateClient(id, req)
+	err = c.storage.Update(id, req)
 	if err != nil {
 		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

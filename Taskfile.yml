@@ -6,7 +6,7 @@ tasks:
       - air
   build:
     cmds:
-      - go build -o http-server cmd/http/main.go
+      - go build -o http-server main.go
   start:
     cmds:
       - ./http-server

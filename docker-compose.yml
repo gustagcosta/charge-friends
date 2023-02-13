@@ -1,9 +1,11 @@
 version: '3.5'
 
 services:
-  # backend:
-  #   container_name: backend_container
-  #   image: . 
+  # comentado apenas para subir o banco de dados local sem subir a aplicação
+  # api-charge-friends:
+  #   container_name: api-charge-friends
+  #   build:
+  #     context: .
   #   environment:
   #     PORT: '8080'
   #     PG_URI: 'user=docker password=docker host=postgres port=5432 dbname=docker sslmode=disable'
@@ -11,7 +13,7 @@ services:
   #   ports:
   #     - '8080:8080'
   #   networks:
-  #     - startup
+  #     - charge-friends
   #   restart: unless-stopped
 
   postgres:
@@ -23,7 +25,7 @@ services:
       POSTGRES_DB: docker
       PGDATA: /data/postgres
     networks:
-      - startup
+      - charge-friends
     volumes:
       - postgres:/data/postgres
       - ./setup-database.sql:/docker-entrypoint-initdb.d/0_init.sql
@@ -32,7 +34,7 @@ services:
     restart: unless-stopped
 
 networks:
-  startup:
+  charge-friends:
     driver: bridge
 
 volumes:

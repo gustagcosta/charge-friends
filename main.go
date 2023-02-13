@@ -83,11 +83,11 @@ func buildServer(env config.EnvVars) (*fiber.App, func(), error) {
 		return c.SendString("Healthy!")
 	})
 
-	userStorage := user.NewUserStorage(db)
+	userStorage := user.NewPostgresUserStorage(db)
 	userController := user.NewUserController(userStorage)
 	user.AddUserRoutes(app, userController)
 
-	clientStorage := client.NewClientStorage(db)
+	clientStorage := client.NewPostgresClientStorage(db)
 	clientController := client.NewClientController(clientStorage)
 	client.AddClientRoutes(app, clientController)
 

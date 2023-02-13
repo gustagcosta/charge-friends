@@ -14,13 +14,13 @@ type Client struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type ClientCreateRequest struct {
+type CreateClientRequest struct {
 	Name     string `json:"name"`
 	Whatsapp string `json:"whatsapp"`
 	Email    string `json:"email"`
 }
 
-func (c *ClientCreateRequest) Validate() error {
+func (c *CreateClientRequest) Validate() error {
 	if c.Name == "" {
 		return errors.New("a client must have a name")
 	}

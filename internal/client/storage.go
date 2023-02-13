@@ -5,17 +5,25 @@ import (
 	"errors"
 )
 
-type ClientStorage struct {
+type ClientStorage interface {
+	FindByUserID(idUser int) ([]Client, error)
+	FindByID(id int) (*Client, error)
+	Create(request *CreateClientRequest, idUser int) (int, error)
+	Delete(id int) error
+	Update(id int, request *CreateClientRequest) error
+}
+
+type PostgresClientStorage struct {
 	db *sql.DB
 }
 
-func NewClientStorage(db *sql.DB) *ClientStorage {
-	return &ClientStorage{
+func NewPostgresClientStorage(db *sql.DB) *PostgresClientStorage {
+	return &PostgresClientStorage{
 		db: db,
 	}
 }
 
-func (s *ClientStorage) FindClients(idUser int) ([]Client, error) {
+func (s *PostgresClientStorage) FindByUserID(idUser int) ([]Client, error) {
 	clients := []Client{}
 	client := Client{}
 
@@ -38,10 +46,10 @@ func (s *ClientStorage) FindClients(idUser int) ([]Client, error) {
 	return clients, nil
 }
 
-func (s *ClientStorage) FindClientByID(idClient int) (*Client, error) {
+func (s *PostgresClientStorage) FindByID(id int) (*Client, error) {
 	client := Client{}
 
-	rows, err := s.db.Query("SELECT id, name, whatsapp, email, created_at, updated_at FROM clients WHERE id = $1", idClient)
+	rows, err := s.db.Query("SELECT id, name, whatsapp, email, created_at, updated_at FROM clients WHERE id = $1", id)
 	if err != nil {
 		return nil, err
 	}
@@ -58,12 +66,12 @@ func (s *ClientStorage) FindClientByID(idClient int) (*Client, error) {
 	return &client, nil
 }
 
-func (s *ClientStorage) CreateNewClient(clientCreateRequest *ClientCreateRequest, idUser int) (int, error) {
+func (s *PostgresClientStorage) Create(request *CreateClientRequest, idUser int) (int, error) {
 	id := 0
 
 	row := s.db.QueryRow(
 		`INSERT INTO clients (name, whatsapp, email, user_id) VALUES ($1, $2, $3, $4) RETURNING id`,
-		clientCreateRequest.Name, clientCreateRequest.Whatsapp, clientCreateRequest.Email, idUser,
+		request.Name, request.Whatsapp, request.Email, idUser,
 	).Scan(&id)
 
 	if row != nil {
@@ -73,8 +81,8 @@ func (s *ClientStorage) CreateNewClient(clientCreateRequest *ClientCreateRequest
 	return id, nil
 }
 
-func (s *ClientStorage) DeleteClientByID(idClient int) error {
-	rows, err := s.db.Query("DELETE FROM clients WHERE id = $1", idClient)
+func (s *PostgresClientStorage) Delete(id int) error {
+	rows, err := s.db.Query("DELETE FROM clients WHERE id = $1", id)
 	if err != nil {
 		return err
 	}
@@ -84,10 +92,10 @@ func (s *ClientStorage) DeleteClientByID(idClient int) error {
 	return nil
 }
 
-func (s *ClientStorage) UpdateClient(idClient int, clientCreateRequest *ClientCreateRequest) error {
+func (s *PostgresClientStorage) Update(id int, request *CreateClientRequest) error {
 	row := s.db.QueryRow(
 		`UPDATE clients SET name = $1, whatsapp = $2, email = $3 WHERE id = $4`,
-		clientCreateRequest.Name, clientCreateRequest.Whatsapp, clientCreateRequest.Email, idClient,
+		request.Name, request.Whatsapp, request.Email, id,
 	)
 
 	if row.Err() != nil {
