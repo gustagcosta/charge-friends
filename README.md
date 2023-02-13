@@ -11,7 +11,7 @@ projetinho dos cria pra registrar quem ta te devendo e mandar email e whatsapp p
 - cadastro e login de usuários
 - crud de cobranças 
 - crud de clientes
-- notificações, será disparada manualmente via rota ou em um serviço em background
+- notificações, disparo manual ou agendado
     - via whatsapp 
     - via e-mail 
 
@@ -34,7 +34,7 @@ cobrança
 - id devedor
 - id usuario
 
-clientes
+cliente
 - id
 - nome
 - email
