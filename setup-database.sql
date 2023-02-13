@@ -20,10 +20,11 @@ CREATE TABLE clients (
 
 CREATE TABLE charges (
   id serial PRIMARY KEY,
-  description text NOT NULL,
-  paid_at timestamp DEFAULT NULL,
-  client_id integer NOT NULL,
+  value text NOT NULL,
+  observation text NOT NULL,
+  notification_date timestamp NOT NULL,
   user_id integer NOT NULL,
+  client_id integer NOT NULL,
   created_at timestamp NOT NULL DEFAULT NOW(),
   updated_at timestamp NOT NULL DEFAULT NOW()
 );

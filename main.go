@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gustagcosta/charge-friends/internal/charge"
 	"github.com/gustagcosta/charge-friends/internal/client"
 	"github.com/gustagcosta/charge-friends/internal/user"
 	"github.com/gustagcosta/charge-friends/server/config"
@@ -90,6 +91,10 @@ func buildServer(env config.EnvVars) (*fiber.App, func(), error) {
 	clientStorage := client.NewPostgresClientStorage(db)
 	clientController := client.NewClientController(clientStorage)
 	client.AddClientRoutes(app, clientController)
+
+	chargeStorage := charge.NewPostgresChargeStorage(db)
+	chargeController := charge.NewChargeController(chargeStorage)
+	charge.AddChargeRoutes(app, chargeController)
 
 	return app, func() {
 		storage.ClosePG(db)
