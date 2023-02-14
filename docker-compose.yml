@@ -1,11 +1,10 @@
 version: '3.5'
 
 services:
-  # comentado apenas para subir o banco de dados local sem subir a aplicação
-  # api-charge-friends:
-  #   container_name: api-charge-friends
+  # api:
+  #   container_name: api
   #   build:
-  #     context: .
+  #     context: ./api
   #   environment:
   #     PORT: '8080'
   #     PG_URI: 'user=docker password=docker host=postgres port=5432 dbname=docker sslmode=disable'
@@ -13,11 +12,11 @@ services:
   #   ports:
   #     - '8080:8080'
   #   networks:
-  #     - charge-friends
+  #     - default
   #   restart: unless-stopped
 
   postgres:
-    container_name: postgres_container
+    container_name: postgres
     image: postgres
     environment:
       POSTGRES_USER: docker
@@ -25,7 +24,7 @@ services:
       POSTGRES_DB: docker
       PGDATA: /data/postgres
     networks:
-      - charge-friends
+      - default
     volumes:
       - postgres:/data/postgres
       - ./setup-database.sql:/docker-entrypoint-initdb.d/0_init.sql
@@ -33,8 +32,24 @@ services:
       - '5432:5432'
     restart: unless-stopped
 
+  localstack:
+    container_name: localstack
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=${DEBUG-}
+      - LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR-} 
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    networks:
+      - default
+
 networks:
-  charge-friends:
+  default:
     driver: bridge
 
 volumes:
