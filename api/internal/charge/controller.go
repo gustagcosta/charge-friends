@@ -2,6 +2,7 @@ package charge
 
 import (
 	"api/server/queue"
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -134,7 +135,30 @@ func (c *ChargeController) UpdateCharge(ctx *fiber.Ctx) error {
 }
 
 func (c *ChargeController) Notification(ctx *fiber.Ctx) error {
-	messageId, err := c.sqsClient.SendMessage()
+	id, err := strconv.Atoi(ctx.Params("id"))
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "invalid id",
+		})
+	}
+
+	charge, err := c.storage.FindByID(id)
+	if err != nil {
+		fmt.Println("error: ", err)
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "charge not found",
+		})
+	}
+
+	chargeString, err := json.Marshal(charge)
+	if err != nil {
+		fmt.Println("error: ", err)
+		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "failed at send message",
+		})
+	}
+
+	messageId, err := c.sqsClient.SendMessage(string(chargeString))
 	if err != nil {
 		fmt.Println("error: ", err)
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

@@ -1,7 +1,8 @@
-package queue
+package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -66,4 +67,29 @@ func (s *SqsClient) SendMessage(body string) (*string, error) {
 	}
 
 	return resp.MessageId, nil
+}
+
+func (s *SqsClient) ReadQueue() (*string, error) {
+	res, err := s.client.ReceiveMessage(context.TODO(), &sqs.ReceiveMessageInput{
+		QueueUrl:            s.queue,
+		MaxNumberOfMessages: 1,
+		WaitTimeSeconds:     5,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if len(res.Messages) == 0 {
+		return nil, errors.New("empty queue")
+	}
+
+	body := *res.Messages[0].Body
+
+	s.client.DeleteMessage(context.TODO(), &sqs.DeleteMessageInput{
+		QueueUrl:      s.queue,
+		ReceiptHandle: res.Messages[0].ReceiptHandle,
+	})
+
+	return &body, nil
 }
